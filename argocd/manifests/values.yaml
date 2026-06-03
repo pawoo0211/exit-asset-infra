@@ -1,0 +1,24 @@
+configs:
+  params:
+    server.insecure: true
+
+server:
+  service:
+    type: ClusterIP
+
+repoServer:
+  resources:
+    requests:
+      cpu: 300m
+      memory: 512Mi
+    limits:
+      cpu: 1
+      memory: 2Gi
+  readinessProbe:
+    timeoutSeconds: 5
+    periodSeconds: 15
+    failureThreshold: 8
+  livenessProbe:
+    timeoutSeconds: 5
+    periodSeconds: 15
+    failureThreshold: 8

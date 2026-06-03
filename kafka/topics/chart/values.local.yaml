@@ -1,0 +1,47 @@
+bootstrapServers: kafka-local-kafka-bootstrap:9092
+
+topics:
+  - name: airflow.task.events
+    partitions: 3
+    replicationFactor: 1
+    configs:
+      cleanup.policy: delete
+  - name: airflow.task.logs
+    partitions: 3
+    replicationFactor: 1
+    configs:
+      cleanup.policy: delete
+  - name: data.pipeline.events
+    partitions: 3
+    replicationFactor: 1
+    configs:
+      cleanup.policy: delete
+
+acl:
+  enabled: false
+  entries:
+    - principal: User:ANONYMOUS
+      host: "*"
+      resourceType: topic
+      resourceName: airflow.task.events
+      patternType: literal
+      operations:
+        - Read
+        - Write
+        - Describe
+    - principal: User:ANONYMOUS
+      host: "*"
+      resourceType: topic
+      resourceName: airflow.task.logs
+      patternType: literal
+      operations:
+        - Read
+        - Write
+        - Describe
+    - principal: User:ANONYMOUS
+      host: "*"
+      resourceType: group
+      resourceName: airflow-consumer
+      patternType: literal
+      operations:
+        - Read

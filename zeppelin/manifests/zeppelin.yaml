@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zeppelin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zeppelin
+  template:
+    metadata:
+      labels:
+        app: zeppelin
+    spec:
+      enableServiceLinks: false
+      containers:
+        - name: zeppelin
+          image: apache/zeppelin:0.11.1
+          ports:
+            - containerPort: 8080
+              name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zeppelin
+spec:
+  selector:
+    app: zeppelin
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP

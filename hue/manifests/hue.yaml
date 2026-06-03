@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hue
+  template:
+    metadata:
+      labels:
+        app: hue
+    spec:
+      containers:
+        - name: hue
+          image: gethue/hue:latest
+          ports:
+            - containerPort: 8888
+              name: http
+          env:
+            - name: HUE_DATABASE_ENGINE
+              value: sqlite
+            - name: HUE_DATABASE_NAME
+              value: /usr/share/hue/desktop.db
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: 1
+              memory: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hue
+spec:
+  selector:
+    app: hue
+  ports:
+    - name: http
+      port: 8888
+      targetPort: 8888
+  type: ClusterIP

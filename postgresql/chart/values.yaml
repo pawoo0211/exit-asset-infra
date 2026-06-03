@@ -1,0 +1,23 @@
+postgresql:
+  auth:
+    username: app
+    password: app1234
+    database: app
+    postgresPassword: postgres1234
+
+  primary:
+    persistence:
+      enabled: true
+      size: 8Gi
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: "1"
+        memory: 1Gi
+
+  service:
+    type: ClusterIP
+    ports:
+      postgresql: 5432

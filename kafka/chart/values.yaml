@@ -1,0 +1,54 @@
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: apache/kafka
+  tag: "3.8.0"
+  pullPolicy: IfNotPresent
+
+replicaCount: 3
+
+service:
+  type: ClusterIP
+  port: 9092
+  controllerPort: 9093
+
+persistence:
+  enabled: true
+  size: 10Gi
+  storageClassName: ""
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: "1"
+    memory: 2Gi
+
+kafka:
+  clusterId: "MkU3OEVBNTcwNTJENDM2Qk"
+  logDirs: "/var/lib/kafka/data"
+  numPartitions: 3
+  autoCreateTopicsEnable: true
+  defaultReplicationFactor: 1
+  minInSyncReplicas: 1
+  offsetsTopicReplicationFactor: 1
+  transactionStateLogReplicationFactor: 1
+  transactionStateLogMinIsr: 1
+  acl:
+    enabled: false
+    authorizerClassName: org.apache.kafka.metadata.authorizer.StandardAuthorizer
+    allowEveryoneIfNoAclFound: true
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

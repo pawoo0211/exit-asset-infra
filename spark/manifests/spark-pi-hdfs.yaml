@@ -1,0 +1,51 @@
+apiVersion: sparkoperator.k8s.io/v1beta2
+kind: SparkApplication
+metadata:
+  name: spark-pi-hdfs
+spec:
+  type: Scala
+  mode: cluster
+  image: apache/spark:4.0.2
+  imagePullPolicy: IfNotPresent
+  mainClass: org.apache.spark.examples.SparkPi
+  mainApplicationFile: local:///opt/spark/examples/jars/spark-examples_2.13-4.0.2.jar
+  sparkVersion: 4.0.2
+  restartPolicy:
+    type: Never
+  sparkConf:
+    spark.hadoop.fs.defaultFS: hdfs://192.168.5.2:9000
+    spark.eventLog.enabled: "true"
+    spark.eventLog.dir: hdfs://192.168.5.2:9000/spark-history
+  deps: {}
+  volumes:
+    - name: hadoop-config
+      configMap:
+        name: hadoop-client-config
+  driver:
+    cores: 1
+    memory: 1g
+    serviceAccount: spark
+    labels:
+      version: 4.0.2
+    envVars:
+      HADOOP_USER_NAME: spark
+      SPARK_USER: spark
+      USER: spark
+      HADOOP_CONF_DIR: /etc/hadoop-conf
+    volumeMounts:
+      - name: hadoop-config
+        mountPath: /etc/hadoop-conf
+  executor:
+    instances: 2
+    cores: 1
+    memory: 1g
+    labels:
+      version: 4.0.2
+    envVars:
+      HADOOP_USER_NAME: spark
+      SPARK_USER: spark
+      USER: spark
+      HADOOP_CONF_DIR: /etc/hadoop-conf
+    volumeMounts:
+      - name: hadoop-config
+        mountPath: /etc/hadoop-conf

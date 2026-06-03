@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pydanticai-runtime
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pydanticai-runtime
+  template:
+    metadata:
+      labels:
+        app: pydanticai-runtime
+    spec:
+      containers:
+        - name: runtime
+          image: python:3.12-slim
+          command: ["/bin/sh", "-lc"]
+          args:
+            - python -m pip install --no-cache-dir pydantic-ai && python -m http.server 8080
+          ports:
+            - containerPort: 8080
+              name: http
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 768Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pydanticai-runtime
+spec:
+  selector:
+    app: pydanticai-runtime
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP

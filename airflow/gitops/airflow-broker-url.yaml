@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: airflow-broker-url
+type: Opaque
+stringData:
+  connection: redis://:@airflow-redis:6379/0

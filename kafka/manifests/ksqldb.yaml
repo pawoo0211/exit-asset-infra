@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ksqldb-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ksqldb-server
+  template:
+    metadata:
+      labels:
+        app: ksqldb-server
+    spec:
+      containers:
+        - name: ksqldb-server
+          image: confluentinc/cp-ksqldb-server:7.6.1
+          ports:
+            - containerPort: 8088
+              name: http
+          env:
+            - name: KSQL_BOOTSTRAP_SERVERS
+              value: kafka-local-kafka-bootstrap:9092
+            - name: KSQL_LISTENERS
+              value: http://0.0.0.0:8088
+            - name: KSQL_KSQL_SERVICE_ID
+              value: kafka-local_
+            - name: KSQL_KSQL_STREAMS_REPLICATION_FACTOR
+              value: "1"
+            - name: KSQL_KSQL_INTERNAL_TOPIC_REPLICAS
+              value: "1"
+            - name: KSQL_KSQL_SINK_REPLICAS
+              value: "1"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ksqldb-server
+spec:
+  selector:
+    app: ksqldb-server
+  ports:
+    - name: http
+      port: 8088
+      targetPort: 8088
+  type: ClusterIP

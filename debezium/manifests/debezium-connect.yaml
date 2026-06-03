@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: debezium-connect
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: debezium-connect
+  template:
+    metadata:
+      labels:
+        app: debezium-connect
+    spec:
+      containers:
+        - name: debezium-connect
+          image: quay.io/debezium/connect:2.7
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8083
+              name: http
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: kafka-local-kafka-bootstrap.kafka.svc.cluster.local:9092
+            - name: GROUP_ID
+              value: debezium-local
+            - name: REST_ADVERTISED_HOST_NAME
+              value: debezium-connect
+            - name: CONFIG_STORAGE_TOPIC
+              value: _debezium_configs
+            - name: OFFSET_STORAGE_TOPIC
+              value: _debezium_offsets
+            - name: STATUS_STORAGE_TOPIC
+              value: _debezium_status
+            - name: CONFIG_STORAGE_REPLICATION_FACTOR
+              value: "1"
+            - name: OFFSET_STORAGE_REPLICATION_FACTOR
+              value: "1"
+            - name: STATUS_STORAGE_REPLICATION_FACTOR
+              value: "1"
+            - name: KEY_CONVERTER
+              value: org.apache.kafka.connect.json.JsonConverter
+            - name: VALUE_CONVERTER
+              value: org.apache.kafka.connect.json.JsonConverter
+            - name: VALUE_CONVERTER_SCHEMAS_ENABLE
+              value: "false"
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: 1
+              memory: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: debezium-connect
+spec:
+  selector:
+    app: debezium-connect
+  ports:
+    - name: http
+      port: 8083
+      targetPort: 8083
+  type: ClusterIP

@@ -1,0 +1,30 @@
+image:
+  repository: apache/kafka
+  tag: "3.8.0"
+  pullPolicy: IfNotPresent
+
+bootstrapServers: kafka-local-kafka-bootstrap:9092
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 300m
+    memory: 512Mi
+
+topics:
+  - name: app.events
+    partitions: 3
+    replicationFactor: 1
+    configs:
+      cleanup.policy: delete
+  - name: app.metrics
+    partitions: 3
+    replicationFactor: 1
+    configs:
+      cleanup.policy: delete
+
+acl:
+  enabled: false
+  entries: []

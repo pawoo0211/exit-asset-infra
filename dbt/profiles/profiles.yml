@@ -1,0 +1,12 @@
+local_clickhouse:
+  target: dev
+  outputs:
+    dev:
+      type: clickhouse
+      schema: default
+      host: localhost
+      port: 18101
+      user: default
+      password: ""
+      secure: false
+      threads: 2

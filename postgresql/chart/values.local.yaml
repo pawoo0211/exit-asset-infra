@@ -1,0 +1,13 @@
+postgresql:
+  image:
+    tag: latest
+
+  auth:
+    username: app
+    password: app1234
+    database: app
+    postgresPassword: postgres1234
+
+  primary:
+    persistence:
+      size: 8Gi

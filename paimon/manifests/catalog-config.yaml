@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: paimon-catalog-config
+data:
+  paimon-hive.properties: |
+    catalog=paimon
+    metastore=hive
+    uri=thrift://hive-metastore.hive-metastore.svc.cluster.local:9083
+    warehouse=hdfs://192.168.5.2:9000/paimon/warehouse
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iceberg-catalog-config
+data:
+  iceberg-hive.properties: |
+    catalog=iceberg
+    catalog-impl=org.apache.iceberg.hive.HiveCatalog
+    uri=thrift://hive-metastore.hive-metastore.svc.cluster.local:9083
+    warehouse=hdfs://192.168.5.2:9000/iceberg/warehouse

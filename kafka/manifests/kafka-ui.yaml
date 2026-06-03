@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-ui
+  template:
+    metadata:
+      labels:
+        app: kafka-ui
+    spec:
+      containers:
+        - name: kafka-ui
+          image: provectuslabs/kafka-ui:latest
+          ports:
+            - containerPort: 8080
+          env:
+            # Context path so /ui/clusters/local-kafka/brokers etc. work on direct access/refresh
+            - name: SERVER_SERVLET_CONTEXT_PATH
+              value: /ui
+            - name: KAFKA_CLUSTERS_0_NAME
+              value: local-kafka
+            - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
+              value: kafka-local-kafka-bootstrap:9092
+            - name: KAFKA_CLUSTERS_0_KSQLDBSERVER
+              value: http://ksqldb-server:8088
+            - name: KAFKA_CLUSTERS_1_NAME
+              value: mirror-kafka
+            - name: KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS
+              value: kafka-mirror-kafka-bootstrap:9092
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-ui
+spec:
+  selector:
+    app: kafka-ui
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP

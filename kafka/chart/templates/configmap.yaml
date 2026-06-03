@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kafka.fullname" . }}-config
+  labels:
+    {{- include "kafka.labels" . | nindent 4 }}
+data:
+  server.properties: |
+    process.roles=broker,controller
+    node.id=__NODE_ID__
+    controller.quorum.voters=__QUORUM_VOTERS__
+    listeners=PLAINTEXT://:{{ .Values.service.port }},CONTROLLER://:{{ .Values.service.controllerPort }}
+    advertised.listeners=__ADVERTISED_LISTENER__
+    listener.security.protocol.map=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+    inter.broker.listener.name=PLAINTEXT
+    controller.listener.names=CONTROLLER
+    log.dirs={{ .Values.kafka.logDirs }}
+    num.partitions={{ .Values.kafka.numPartitions }}
+    auto.create.topics.enable={{ .Values.kafka.autoCreateTopicsEnable }}
+    default.replication.factor={{ .Values.kafka.defaultReplicationFactor }}
+    min.insync.replicas={{ .Values.kafka.minInSyncReplicas }}
+    offsets.topic.replication.factor={{ .Values.kafka.offsetsTopicReplicationFactor }}
+    transaction.state.log.replication.factor={{ .Values.kafka.transactionStateLogReplicationFactor }}
+    transaction.state.log.min.isr={{ .Values.kafka.transactionStateLogMinIsr }}
+    {{- if .Values.kafka.acl.enabled }}
+    authorizer.class.name={{ .Values.kafka.acl.authorizerClassName }}
+    allow.everyone.if.no.acl.found={{ .Values.kafka.acl.allowEveryoneIfNoAclFound }}
+    {{- end }}

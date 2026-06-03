@@ -1,0 +1,50 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaMirrorMaker2
+metadata:
+  name: mm2-local-to-mirror
+spec:
+  version: 4.1.1
+  replicas: 1
+  resources:
+    requests:
+      cpu: 200m
+      memory: 384Mi
+    limits:
+      cpu: 1
+      memory: 1024Mi
+  jvmOptions:
+    -Xms: 128m
+    -Xmx: 256m
+  livenessProbe:
+    initialDelaySeconds: 90
+    timeoutSeconds: 10
+  readinessProbe:
+    initialDelaySeconds: 90
+    timeoutSeconds: 10
+  target:
+    alias: mirror
+    bootstrapServers: kafka-mirror-kafka-bootstrap.kafka.svc.cluster.local:9092
+    groupId: mm2-local-to-mirror-group
+    configStorageTopic: mm2-local-to-mirror-configs
+    offsetStorageTopic: mm2-local-to-mirror-offsets
+    statusStorageTopic: mm2-local-to-mirror-status
+    config:
+      config.storage.replication.factor: 1
+      offset.storage.replication.factor: 1
+      status.storage.replication.factor: 1
+  mirrors:
+    - source:
+        alias: local
+        bootstrapServers: kafka-local-kafka-bootstrap.kafka.svc.cluster.local:9092
+        config:
+          config.storage.replication.factor: 1
+          offset.storage.replication.factor: 1
+          status.storage.replication.factor: 1
+      topicsPattern: "^(mm2-smoke|airflow\\.task\\.events|airflow\\.task\\.logs|data\\.pipeline\\.events)$"
+      groupsPattern: "^$"
+      sourceConnector:
+        config:
+          replication.factor: 1
+          offset-syncs.topic.replication.factor: 1
+          sync.topic.acls.enabled: "false"
+          refresh.topics.interval.seconds: 60

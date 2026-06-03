@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "kafka.fullname" . }}
+  labels:
+    {{- include "kafka.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "kafka.headlessServiceName" . }}
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "kafka.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "kafka.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: kafka
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /bin/bash
+            - -ec
+            - |
+              POD_NAME="${HOSTNAME}"
+              ORDINAL="${POD_NAME##*-}"
+              NODE_ID="$((ORDINAL + 1))"
+              ADVERTISED_LISTENER="PLAINTEXT://${POD_NAME}.{{ include "kafka.headlessServiceName" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.port }}"
+              sed \
+                -e "s|__NODE_ID__|${NODE_ID}|g" \
+                -e "s|__QUORUM_VOTERS__|{{ include "kafka.quorumVoters" . }}|g" \
+                -e "s|__ADVERTISED_LISTENER__|${ADVERTISED_LISTENER}|g" \
+                /etc/kafka/server.properties > /tmp/server.properties
+              if [ ! -f {{ .Values.kafka.logDirs }}/meta.properties ]; then
+                /opt/kafka/bin/kafka-storage.sh format -t {{ .Values.kafka.clusterId }} -c /tmp/server.properties
+              fi
+              exec /opt/kafka/bin/kafka-server-start.sh /tmp/server.properties
+          ports:
+            - name: kafka
+              containerPort: {{ .Values.service.port }}
+            - name: controller
+              containerPort: {{ .Values.service.controllerPort }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/kafka/server.properties
+              subPath: server.properties
+            - name: data
+              mountPath: {{ .Values.kafka.logDirs }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "kafka.fullname" . }}-config
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  {{- if .Values.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        {{- if .Values.persistence.storageClassName }}
+        storageClassName: {{ .Values.persistence.storageClassName }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size }}
+  {{- else }}
+  volumeClaimTemplates: []
+  {{- end }}

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: airflow-local-fernet-key
+type: Opaque
+stringData:
+  fernet-key: OTBlbzlCVTlQRjlSaTQ2MGNRU1pocUxwUjAyWXlGZng=

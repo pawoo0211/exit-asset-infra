@@ -1,0 +1,836 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kafka-operator
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: infra-local
+  source:
+    repoURL: https://strimzi.io/charts/
+    chart: strimzi-kafka-operator
+    targetRevision: 0.51.0
+    helm:
+      skipCrds: true
+      parameters:
+        - name: watchAnyNamespace
+          value: "false"
+        - name: leaderElection.enable
+          value: "false"
+        - name: livenessProbe.initialDelaySeconds
+          value: "120"
+        - name: livenessProbe.periodSeconds
+          value: "60"
+        - name: readinessProbe.initialDelaySeconds
+          value: "60"
+        - name: readinessProbe.periodSeconds
+          value: "30"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kafka
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kafka-stack
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: infra-local
+  ignoreDifferences:
+    - group: ""
+      kind: Secret
+      name: airflow-broker-url
+      namespace: airflow
+      jsonPointers:
+        - /data
+    - group: ""
+      kind: Secret
+      name: airflow-fernet-key
+      namespace: airflow
+      jsonPointers:
+        - /data
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: kafka/manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kafka
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kafka-topics
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: kafka/topics/chart
+    helm:
+      valueFiles:
+        - values.local.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kafka
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: postgresql
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: postgresql/chart
+    helm:
+      valueFiles:
+        - values.local.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: postgresql
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: airflow-secrets
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: airflow/gitops
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: airflow
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: airflow
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: airflow/chart
+    helm:
+      valueFiles:
+        - values.local.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: airflow
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: minio
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: minio/manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: minio
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mongodb
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: mongodb/manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: mongodb
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: spark-operator
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://kubeflow.github.io/spark-operator
+    chart: spark-operator
+    targetRevision: 2.5.0
+    helm:
+      skipCrds: true
+      parameters:
+        - name: spark.jobNamespaces[0]
+          value: spark
+        - name: webhook.enable
+          value: "false"
+        - name: controller.leaderElection.enable
+          value: "false"
+        - name: controller.workers
+          value: "2"
+        - name: controller.resources.requests.cpu
+          value: 300m
+        - name: controller.resources.requests.memory
+          value: 512Mi
+        - name: controller.resources.limits.cpu
+          value: "1"
+        - name: controller.resources.limits.memory
+          value: 1Gi
+        - name: webhook.leaderElection.enable
+          value: "false"
+        - name: spark.serviceAccount.create
+          value: "false"
+        - name: spark.serviceAccount.name
+          value: spark
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: spark-operator
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: spark-runtime
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: spark/gitops
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: spark
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: starrocks-storageclass
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: starrocks/gitops
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: starrocks
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: starrocks-operator
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://starrocks.github.io/starrocks-kubernetes-operator
+    chart: operator
+    targetRevision: 1.11.4
+    helm:
+      skipCrds: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: starrocks
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: starrocks-cluster
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://starrocks.github.io/starrocks-kubernetes-operator
+    chart: starrocks
+    targetRevision: 1.11.4
+    helm:
+      values: |
+        starrocksFESpec:
+          replicas: 1
+          hostType: IP
+          feEnvVars:
+            - name: HOST_TYPE
+              value: IP
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: 1
+              memory: 1Gi
+          storageSpec:
+            name: fe
+            storageClassName: local-path
+            storageSize: 10Gi
+            logStorageClassName: local-path
+            logStorageSize: 5Gi
+        starrocksBeSpec:
+          replicas: 0
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 2
+              memory: 2Gi
+          storageSpec:
+            name: be
+            storageClassName: local-path
+            storageSize: 20Gi
+            logStorageClassName: local-path
+            logStorageSize: 5Gi
+        starrocksCnSpec:
+          replicas: 0
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: starrocks
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hive-metastore
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: hive-metastore/manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: hive-metastore
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: iceberg
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: iceberg/manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: iceberg
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: paimon
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: paimon/manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: paimon
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: schema-registry
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: schema-registry/manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: schema-registry
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kafka-connect
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: kafka-connect/manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kafka-connect
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: debezium
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: debezium/manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: debezium
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prometheus
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: prometheus/chart
+    helm:
+      valueFiles:
+        - values.local.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: prometheus
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: grafana/chart
+    helm:
+      valueFiles:
+        - values.local.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: grafana
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: harbor
+  namespace: argocd
+spec:
+  project: infra-local
+  ignoreDifferences:
+    - group: ""
+      kind: Secret
+      name: harbor-core
+      namespace: harbor
+      jsonPointers:
+        - /data
+    - group: ""
+      kind: Secret
+      name: harbor-jobservice
+      namespace: harbor
+      jsonPointers:
+        - /data
+    - group: ""
+      kind: Secret
+      name: harbor-registry
+      namespace: harbor
+      jsonPointers:
+        - /data
+    - group: ""
+      kind: Secret
+      name: harbor-registry-htpasswd
+      namespace: harbor
+      jsonPointers:
+        - /data
+    - group: apps
+      kind: Deployment
+      name: harbor-core
+      namespace: harbor
+      jsonPointers:
+        - /spec/template/metadata/annotations
+        - /spec/template/spec/containers/0/livenessProbe
+        - /spec/template/spec/containers/0/readinessProbe
+        - /spec/template/spec/containers/0/startupProbe
+    - group: apps
+      kind: Deployment
+      name: harbor-jobservice
+      namespace: harbor
+      jsonPointers:
+        - /spec/template/metadata/annotations
+        - /spec/template/spec/containers/0/livenessProbe
+        - /spec/template/spec/containers/0/readinessProbe
+    - group: apps
+      kind: Deployment
+      name: harbor-registry
+      namespace: harbor
+      jsonPointers:
+        - /spec/template/metadata/annotations
+    - group: apps
+      kind: StatefulSet
+      name: harbor-database
+      namespace: harbor
+      jsonPointers:
+        - /spec/template/metadata/annotations
+        - /spec/template/spec/containers/0/livenessProbe
+        - /spec/template/spec/containers/0/readinessProbe
+  source:
+    repoURL: https://helm.goharbor.io
+    chart: harbor
+    targetRevision: 1.18.3
+    helm:
+      values: |
+        expose:
+          type: clusterIP
+          tls:
+            enabled: false
+        externalURL: http://localhost:18443
+        harborAdminPassword: Harbor12345
+        persistence:
+          enabled: false
+        trivy:
+          enabled: false
+        notary:
+          enabled: false
+        secretKey: harborlocalkey123
+        core:
+          secret: harbor-core-secret-local-2026
+          resources:
+            requests:
+              cpu: 300m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          startupProbe:
+            enabled: true
+            initialDelaySeconds: 120
+          initContainers:
+            - name: wait-for-harbor-db
+              image: busybox:1.36
+              command:
+                - sh
+                - -c
+                - until nc -z harbor-database 5432; do echo waiting for harbor-database; sleep 2; done
+        jobservice:
+          secret: harbor-jobservice-secret-local-2026
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 768Mi
+          initContainers:
+            - name: wait-for-harbor-core
+              image: busybox:1.36
+              command:
+                - sh
+                - -c
+                - until wget -qO- http://harbor-core:80/api/v2.0/ping >/dev/null 2>&1; do echo waiting for harbor-core; sleep 2; done
+        registry:
+          secret: harbor-registry-secret-local-2026
+          credentials:
+            htpasswdString: 'harbor_registry_user:$apr1$local123$Hx7BR3e2HCXGywBaXtXqZ0'
+        database:
+          type: internal
+          internal:
+            readinessProbe:
+              initialDelaySeconds: 30
+              timeoutSeconds: 20
+              periodSeconds: 15
+              failureThreshold: 10
+            livenessProbe:
+              initialDelaySeconds: 180
+              timeoutSeconds: 20
+              periodSeconds: 20
+              failureThreshold: 10
+            resources:
+              requests:
+                cpu: 500m
+                memory: 512Mi
+              limits:
+                cpu: "1"
+                memory: 1Gi
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: harbor
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: zeppelin
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: zeppelin/manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: zeppelin
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: streampark
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: streampark/manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: streampark
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flink
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: flink/manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: flink
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: clickhouse
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: clickhouse/manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: clickhouse
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: loki
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: loki/manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: loki
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pydanticai
+  namespace: argocd
+spec:
+  project: infra-local
+  source:
+    repoURL: https://github.com/pawoo0211/exit-asset-infra.git
+    targetRevision: main
+    path: pydanticai/manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: pydanticai
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

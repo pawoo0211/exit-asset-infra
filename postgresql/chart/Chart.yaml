@@ -1,0 +1,10 @@
+apiVersion: v2
+name: postgresql-local
+description: Wrapper chart for PostgreSQL local deployment
+type: application
+version: 0.1.0
+appVersion: "16.1.0"
+dependencies:
+  - name: postgresql
+    version: "13.2.24"
+    repository: "https://charts.bitnami.com/bitnami"

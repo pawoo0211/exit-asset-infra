@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ printf "%s-create-topics" .Release.Name | quote }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kafka-topics
+        app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: create-topics
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /bin/bash
+            - -ec
+            - |
+              set -euo pipefail
+              echo "Waiting for Kafka bootstrap: {{ .Values.bootstrapServers }}"
+              /opt/kafka/bin/kafka-topics.sh --bootstrap-server {{ .Values.bootstrapServers }} --list >/dev/null
+              {{- range .Values.topics }}
+              echo "Ensuring topic '{{ .name }}'"
+              /opt/kafka/bin/kafka-topics.sh --bootstrap-server {{ $.Values.bootstrapServers }} --create --if-not-exists --topic {{ .name }} --partitions {{ .partitions }} --replication-factor {{ .replicationFactor }}{{- range $key, $value := .configs }} --config {{ $key }}={{ $value }}{{- end }}
+              {{- end }}
+
+              {{- if .Values.acl.enabled }}
+              echo "Applying ACL entries"
+              {{- range .Values.acl.entries }}
+              /opt/kafka/bin/kafka-acls.sh --bootstrap-server {{ $.Values.bootstrapServers }} --add --allow-principal {{ .principal | quote }} --allow-host {{ default "*" .host | quote }}{{- range .operations }} --operation {{ . }}{{- end }}{{- if eq .resourceType "topic" }} --topic {{ .resourceName | quote }}{{- else if eq .resourceType "group" }} --group {{ .resourceName | quote }}{{- else if eq .resourceType "cluster" }} --cluster{{- else if eq .resourceType "transactional-id" }} --transactional-id {{ .resourceName | quote }}{{- end }}{{- if .patternType }} --resource-pattern-type {{ .patternType }}{{- end }}
+              {{- end }}
+              {{- end }}
+
+              echo "Done"
+          resources:
+            {{ toYaml .Values.resources | nindent 12 }}

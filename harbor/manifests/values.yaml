@@ -1,0 +1,26 @@
+expose:
+  type: clusterIP
+  tls:
+    enabled: false
+
+externalURL: http://localhost:18443
+harborAdminPassword: Harbor12345
+
+persistence:
+  enabled: false
+
+trivy:
+  enabled: false
+
+notary:
+  enabled: false
+
+database:
+  type: internal
+  internal:
+    readinessProbe:
+      initialDelaySeconds: 20
+      timeoutSeconds: 5
+    livenessProbe:
+      initialDelaySeconds: 60
+      timeoutSeconds: 5

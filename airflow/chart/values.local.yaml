@@ -1,0 +1,49 @@
+airflow:
+  fernetKeySecretName: airflow-local-fernet-key
+  webserverSecretKeySecretName: airflow-webserver-secret-key
+  data:
+    brokerUrlSecretName: airflow-broker-url
+
+  migrateDatabaseJob:
+    useHelmHooks: false
+  createUserJob:
+    useHelmHooks: false
+
+  logs:
+    persistence:
+      enabled: false
+
+  webserver:
+    waitForMigrations:
+      enabled: false
+    startupProbe:
+      periodSeconds: 10
+      timeoutSeconds: 20
+      failureThreshold: 60
+    service:
+      type: ClusterIP
+
+  scheduler:
+    waitForMigrations:
+      enabled: false
+    livenessProbe:
+      timeoutSeconds: 60
+      periodSeconds: 60
+      failureThreshold: 10
+    startupProbe:
+      periodSeconds: 10
+      timeoutSeconds: 60
+      failureThreshold: 60
+
+  config:
+    core:
+      load_examples: "False"
+    webserver:
+      web_server_master_timeout: "300"
+
+  postgresql:
+    image:
+      tag: latest
+    primary:
+      persistence:
+        size: 8Gi

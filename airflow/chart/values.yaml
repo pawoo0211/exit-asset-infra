@@ -1,0 +1,57 @@
+airflow:
+  executor: LocalExecutor
+
+  webserver:
+    defaultUser:
+      enabled: true
+      username: admin
+      password: admin
+      email: admin@example.local
+      firstName: Admin
+      lastName: User
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+
+  scheduler:
+    resources:
+      requests:
+        cpu: 300m
+        memory: 512Mi
+      limits:
+        cpu: "1"
+        memory: 1Gi
+
+  triggerer:
+    enabled: false
+
+  redis:
+    enabled: false
+
+  postgresql:
+    enabled: true
+    auth:
+      username: airflow
+      password: airflow
+      database: airflow
+    primary:
+      persistence:
+        enabled: true
+        size: 8Gi
+
+  dags:
+    persistence:
+      enabled: false
+
+  logs:
+    persistence:
+      enabled: true
+      size: 5Gi
+
+  ingress:
+    web:
+      enabled: false

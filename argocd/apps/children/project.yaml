@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: infra-local
+  namespace: argocd
+spec:
+  sourceRepos:
+    - https://github.com/pawoo0211/exit-asset-infra.git
+    - https://strimzi.io/charts/
+    - https://kubeflow.github.io/spark-operator
+    - https://starrocks.github.io/starrocks-kubernetes-operator
+    - https://helm.goharbor.io
+  destinations:
+    - namespace: '*'
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'

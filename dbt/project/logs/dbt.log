@@ -1,0 +1,128 @@
+[0m18:46:42.449803 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109624620>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10a0a78f0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10a0a7680>]}
+
+
+============================== 18:46:42.457157 | 5e5606a1-0200-4b42-bdf5-b5a7fb6b28f2 ==============================
+[0m18:46:42.457157 [info ] [MainThread]: Running with dbt=1.11.7
+[0m18:46:42.457585 [debug] [MainThread]: running dbt with arguments {'indirect_selection': 'eager', 'log_format': 'default', 'write_json': 'True', 'debug': 'False', 'fail_fast': 'False', 'log_cache_events': 'False', 'printer_width': '80', 'cache_selected_only': 'False', 'invocation_command': 'dbt deps --project-dir /Users/parksang-kwon/exit-asset-infra/dbt/project --profiles-dir /Users/parksang-kwon/exit-asset-infra/dbt/profiles', 'no_print': 'None', 'log_path': '/Users/parksang-kwon/exit-asset-infra/dbt/project/logs', 'profiles_dir': '/Users/parksang-kwon/exit-asset-infra/dbt/profiles', 'send_anonymous_usage_stats': 'True', 'target_path': 'None', 'partial_parse': 'True', 'introspect': 'True', 'use_experimental_parser': 'False', 'empty': 'None', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'use_colors': 'True', 'static_parser': 'True', 'quiet': 'False', 'warn_error': 'None', 'version_check': 'True'}
+[0m18:46:42.585610 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': '5e5606a1-0200-4b42-bdf5-b5a7fb6b28f2', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x106e4b410>]}
+[0m18:46:42.609562 [info ] [MainThread]: Warning: No packages were found in packages.yml
+[0m18:46:42.610319 [info ] [MainThread]: Warning: No packages were found in packages.yml
+[0m18:46:42.905476 [debug] [MainThread]: Resource report: {"command_name": "deps", "command_success": true, "command_wall_clock_time": 0.5299338, "process_in_blocks": "0", "process_kernel_time": 0.349344, "process_mem_max_rss": "103415808", "process_out_blocks": "0", "process_user_time": 1.15659}
+[0m18:46:42.906520 [debug] [MainThread]: Command `dbt deps` succeeded at 18:46:42.906402 after 0.53 seconds
+[0m18:46:42.906880 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109624cb0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10a0a7680>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10a0a7890>]}
+[0m18:46:42.907108 [debug] [MainThread]: Flushing usage events
+[0m18:46:43.911958 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m18:46:45.852173 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x131098050>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x130e396a0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1311a3b60>]}
+
+
+============================== 18:46:45.858084 | 7c408bd3-e6bf-47c2-a62f-e8dad8bbad8a ==============================
+[0m18:46:45.858084 [info ] [MainThread]: Running with dbt=1.11.7
+[0m18:46:45.858559 [debug] [MainThread]: running dbt with arguments {'log_cache_events': 'False', 'fail_fast': 'False', 'partial_parse': 'True', 'debug': 'False', 'send_anonymous_usage_stats': 'True', 'version_check': 'True', 'target_path': 'None', 'static_parser': 'True', 'indirect_selection': 'eager', 'write_json': 'True', 'introspect': 'True', 'use_experimental_parser': 'False', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'log_format': 'default', 'quiet': 'False', 'printer_width': '80', 'empty': 'None', 'warn_error': 'None', 'use_colors': 'True', 'cache_selected_only': 'False', 'log_path': '/Users/parksang-kwon/exit-asset-infra/dbt/project/logs', 'no_print': 'None', 'invocation_command': 'dbt docs generate --project-dir /Users/parksang-kwon/exit-asset-infra/dbt/project --profiles-dir /Users/parksang-kwon/exit-asset-infra/dbt/profiles', 'profiles_dir': '/Users/parksang-kwon/exit-asset-infra/dbt/profiles'}
+[0m18:46:46.047413 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': '7c408bd3-e6bf-47c2-a62f-e8dad8bbad8a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1060b6000>]}
+[0m18:46:46.096133 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'adapter_info', 'label': '7c408bd3-e6bf-47c2-a62f-e8dad8bbad8a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1310240b0>]}
+[0m18:46:46.097375 [info ] [MainThread]: Registered adapter: clickhouse=1.10.0
+[0m18:46:46.636671 [debug] [MainThread]: checksum: b80718358155fc17c3559352095564dd56ada1cc1a1c0ef2e62c857e71583775, vars: {}, profile: , target: , version: 1.11.7
+[0m18:46:46.639728 [info ] [MainThread]: Unable to do partial parsing because saved manifest not found. Starting full parse.
+[0m18:46:46.640564 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'partial_parser', 'label': '7c408bd3-e6bf-47c2-a62f-e8dad8bbad8a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x131402060>]}
+[0m18:46:47.777031 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'load_project', 'label': '7c408bd3-e6bf-47c2-a62f-e8dad8bbad8a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1311daea0>]}
+[0m18:46:47.804291 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'resource_counts', 'label': '7c408bd3-e6bf-47c2-a62f-e8dad8bbad8a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1317b9a00>]}
+[0m18:46:47.804630 [info ] [MainThread]: Found 1 model, 523 macros
+[0m18:46:47.804840 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '7c408bd3-e6bf-47c2-a62f-e8dad8bbad8a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1313244a0>]}
+[0m18:46:47.806690 [info ] [MainThread]: 
+[0m18:46:47.807208 [info ] [MainThread]: Concurrency: 2 threads (target='dev')
+[0m18:46:47.807425 [info ] [MainThread]: 
+[0m18:46:47.808007 [debug] [MainThread]: Acquiring new clickhouse connection 'master'
+[0m18:46:47.809161 [debug] [ThreadPool]: Acquiring new clickhouse connection 'list__default'
+[0m18:46:47.821896 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m18:47:33.508422 [debug] [ThreadPool]: dbt_clickhouse adapter: On list__default: /* {"app": "dbt", "dbt_version": "1.11.7", "profile_name": "local_clickhouse", "target_name": "dev", "connection_name": "list__default"} */
+with mv_sources as (
+      -- Find all MVs and their target tables (database and name of the MV, plus the SELECT SQL)
+      select
+        name as mv_name,
+        database as mv_database,
+        any(as_select) as mv_sql,
+        any(replaceRegexpOne(create_table_query, '.*TO\\s+`?([^`\\s(]+)`?\\.`?([^`\\s(]+)`?.*', '\\1.\\2')) as target_fqn
+      
+      from system.tables
+      
+      where engine = 'MaterializedView'
+        and create_table_query like '%TO %'
+      group by mv_name, mv_database
+    )
+    select
+      t.name as name,
+      t.database as schema,
+      multiIf(
+        t.engine = 'MaterializedView', 'materialized_view',
+        t.engine = 'View', 'view',
+        t.engine = 'Dictionary', 'dictionary',
+        'table'
+      ) as type,
+      db.engine as db_engine,
+      groupArrayIf(
+        map('schema', mv_sources.mv_database, 'name', mv_sources.mv_name, 'sql', mv_sources.mv_sql),
+        mv_sources.mv_name != ''
+      ) as mvs_pointing_to_it,0 as is_on_cluster
+        from system.tables as t
+      
+        join system.databases as db on t.database = db.name
+        left join mv_sources on mv_sources.target_fqn = concat(t.database, '.', t.name)
+      where schema = 'default'
+      group by name, schema, type, db_engine
+
+  ...
+[0m18:47:44.411022 [debug] [ThreadPool]: dbt_clickhouse adapter: SQL status: OK in 10.89 seconds
+[0m18:47:44.476563 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '7c408bd3-e6bf-47c2-a62f-e8dad8bbad8a', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1311a3aa0>]}
+[0m18:47:44.504046 [debug] [Thread-1 (]: Began running node model.local_clickhouse_dbt.example_model
+[0m18:47:44.505128 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly list__default, now model.local_clickhouse_dbt.example_model)
+[0m18:47:44.506306 [debug] [Thread-1 (]: Began compiling node model.local_clickhouse_dbt.example_model
+[0m18:47:44.538267 [debug] [Thread-1 (]: Writing injected SQL for node "model.local_clickhouse_dbt.example_model"
+[0m18:47:44.540377 [debug] [Thread-1 (]: Began executing node model.local_clickhouse_dbt.example_model
+[0m18:47:44.542734 [debug] [Thread-1 (]: Finished running node model.local_clickhouse_dbt.example_model
+[0m18:47:44.545881 [debug] [MainThread]: Connection 'master' was properly closed.
+[0m18:47:44.546115 [debug] [MainThread]: Connection 'model.local_clickhouse_dbt.example_model' was left open.
+[0m18:47:44.546282 [debug] [MainThread]: On model.local_clickhouse_dbt.example_model: Close
+[0m18:47:44.548173 [debug] [MainThread]: Command end result
+[0m18:47:44.630451 [debug] [MainThread]: Wrote artifact WritableManifest to /Users/parksang-kwon/exit-asset-infra/dbt/project/target/manifest.json
+[0m18:47:44.636005 [debug] [MainThread]: Wrote artifact SemanticManifest to /Users/parksang-kwon/exit-asset-infra/dbt/project/target/semantic_manifest.json
+[0m18:47:44.644496 [debug] [MainThread]: Wrote artifact RunExecutionResult to /Users/parksang-kwon/exit-asset-infra/dbt/project/target/run_results.json
+[0m18:47:44.648378 [debug] [MainThread]: Acquiring new clickhouse connection 'generate_catalog'
+[0m18:47:44.648627 [info ] [MainThread]: Building catalog
+[0m18:47:44.664163 [debug] [MainThread]: Opening a new connection, currently in state init
+[0m18:47:49.181995 [debug] [MainThread]: dbt_clickhouse adapter: On generate_catalog: /* {"app": "dbt", "dbt_version": "1.11.7", "profile_name": "local_clickhouse", "target_name": "dev", "connection_name": "generate_catalog"} */
+select
+      '' as table_database,
+      columns.database as table_schema,
+      columns.table as table_name,
+      if(tables.engine not in ('MaterializedView', 'View'), 'table', 'view') as table_type,
+      nullIf(tables.comment, '') as table_comment,
+      columns.name as column_name,
+      columns.position as column_index,
+      columns.type as column_type,
+      nullIf(columns.comment, '') as column_comment,
+      null as table_owner
+    from system.columns as columns
+    join system.tables as tables on tables.database = columns.database and tables.name = columns.table
+    where database != 'system' and
+    (columns.database = 'default')
+    order by columns.database, columns.table, columns.position...
+[0m18:47:50.616283 [debug] [MainThread]: dbt_clickhouse adapter: SQL status: OK in 1.43 seconds
+[0m18:47:50.679398 [debug] [MainThread]: Wrote artifact CatalogArtifact to /Users/parksang-kwon/exit-asset-infra/dbt/project/target/catalog.json
+[0m18:47:50.729533 [debug] [MainThread]: Wrote artifact WritableManifest to /Users/parksang-kwon/exit-asset-infra/dbt/project/target/manifest.json
+[0m18:47:50.738375 [debug] [MainThread]: Wrote artifact SemanticManifest to /Users/parksang-kwon/exit-asset-infra/dbt/project/target/semantic_manifest.json
+[0m18:47:50.739083 [info ] [MainThread]: Catalog written to /Users/parksang-kwon/exit-asset-infra/dbt/project/target/catalog.json
+[0m18:47:50.749024 [debug] [MainThread]: Resource report: {"command_name": "generate", "command_success": true, "command_wall_clock_time": 64.972084, "process_in_blocks": "0", "process_kernel_time": 0.714348, "process_mem_max_rss": "113098752", "process_out_blocks": "0", "process_user_time": 2.275053}
+[0m18:47:50.750770 [debug] [MainThread]: Command `dbt docs generate` succeeded at 18:47:50.750531 after 64.98 seconds
+[0m18:47:50.751890 [debug] [MainThread]: Connection 'generate_catalog' was left open.
+[0m18:47:50.752551 [debug] [MainThread]: On generate_catalog: Close
+[0m18:47:50.754004 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x131ed4710>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x131ed4a40>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x131ed4c20>]}
+[0m18:47:50.754849 [debug] [MainThread]: Flushing usage events
+[0m18:47:51.667015 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m18:47:54.773665 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x106ad1430>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109d9fb00>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109d9f860>]}
+
+
+============================== 18:47:54.787428 | 0120dc7a-50d7-478b-abf5-538255013aff ==============================
+[0m18:47:54.787428 [info ] [MainThread]: Running with dbt=1.11.7
+[0m18:47:54.788269 [debug] [MainThread]: running dbt with arguments {'fail_fast': 'False', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'printer_width': '80', 'log_path': '/Users/parksang-kwon/exit-asset-infra/dbt/project/logs', 'log_format': 'default', 'partial_parse': 'True', 'introspect': 'True', 'profiles_dir': '/Users/parksang-kwon/exit-asset-infra/dbt/profiles', 'no_print': 'None', 'write_json': 'True', 'static_parser': 'True', 'warn_error': 'None', 'debug': 'False', 'use_colors': 'True', 'send_anonymous_usage_stats': 'True', 'log_cache_events': 'False', 'cache_selected_only': 'False', 'empty': 'None', 'version_check': 'True', 'invocation_command': 'dbt docs serve --project-dir /Users/parksang-kwon/exit-asset-infra/dbt/project --profiles-dir /Users/parksang-kwon/exit-asset-infra/dbt/profiles --port 18103 --no-browser', 'use_experimental_parser': 'False', 'quiet': 'False', 'target_path': 'None', 'indirect_selection': 'eager'}
+[0m18:47:55.013361 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': '0120dc7a-50d7-478b-abf5-538255013aff', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x106cbe330>]}
+[0m18:47:55.074453 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'adapter_info', 'label': '0120dc7a-50d7-478b-abf5-538255013aff', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10921ec00>]}

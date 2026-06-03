@@ -1,0 +1,38 @@
+starrocksFESpec:
+  replicas: 1
+  hostType: IP
+  feEnvVars:
+    - name: HOST_TYPE
+      value: IP
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1
+      memory: 1Gi
+  storageSpec:
+    name: fe
+    storageClassName: local-path
+    storageSize: 10Gi
+    logStorageClassName: local-path
+    logStorageSize: 5Gi
+
+starrocksBeSpec:
+  replicas: 0
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 2
+      memory: 2Gi
+  storageSpec:
+    name: be
+    storageClassName: local-path
+    storageSize: 20Gi
+    logStorageClassName: local-path
+    logStorageSize: 5Gi
+
+starrocksCnSpec:
+  replicas: 0
